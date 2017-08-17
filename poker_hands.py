@@ -109,6 +109,7 @@ def flush(ranks, suits):
     return False
 
 def straight(ranks):
+    ranks = ranks.copy()
     s = set(c for c in ranks if max(ranks) - min(ranks) == len(ranks)-1)
     if len(s) == 5:
         return set([max(s)])
@@ -170,7 +171,7 @@ def tests():
     return "Tests Passed"
 
 print(tests())
-#print(match())
+print(match())
     
 
 
