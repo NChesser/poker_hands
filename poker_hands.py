@@ -5,22 +5,7 @@ Project Euler Problem 52
 with open("p054_poker.txt", "r") as f:
     poker = [[c for c in l.rstrip('\n').split()] for l in f]
 
-card_values = {
-    '1': 1,
-    '2': 2,
-    '3': 3,
-    '4': 4,
-    '5': 5,
-    '6': 6,
-    '7': 7,
-    '8': 8,
-    '9': 9,
-    'T': 10,
-    'J': 11,
-    'Q': 12,
-    'K': 13,
-    'A': 14
-}
+card_values = {'1': 1,'2': 2,'3': 3,'4': 4,'5': 5,'6': 6,'7': 7,'8': 8,'9': 9,'T': 10,'J': 11,'Q': 12,'K': 13,'A': 14}
 
 def card_ranks(hand):
     return [card_values[r[0]] for r in hand]
@@ -42,45 +27,33 @@ def hand_value(hand):
     if flush(ranks, suits): return (6, high(ranks))
     if straight(ranks): return (5, straight(ranks))
     if kinds(3, ranks): return (4, kinds(3, ranks))
-    if two_pair(ranks): return (3, two_pair(ranks))
-    if kinds(2, ranks): return (2, kinds(2, ranks))
+    if two_pair(ranks): return (3, two_pair(ranks), high(ranks))
+    if kinds(2, ranks): return (2, kinds(2, ranks), high(ranks))
     if high(ranks): return (1, high(ranks)) 
 
-def winner(p1, p2):
-    if p1[0] > p2[0]:
-        print("Player 1")
-        return 1
-    elif p2[0] > p1[0]:
-        print("Player 2")
-        return 0
-    else:
-        if max(p1[1]) > max(p2[1]):
-            print("Player 1")
+def winner(p1, p2):    
+    #implement list of importance to loop thorugh
+    for h1, h2 in zip(p1, p2):
+        if h1 > h2:
             return 1
-        elif max(p2[1]) > max(p1[1]):
-            print("Player 2")
+        elif h2 > h1:
             return 0
-        else:
-            print("Draw")
-            return 0
+    else:
+        return 0
 
 def match():
     total = 0
     for i, p in enumerate(poker):
         p1 = hand_value(poker[i][:5])
         p2 = hand_value(poker[i][5:])
-
         print(p1)
         print(p2)
-
-        total += winner(p1, p2)
-    
+        total += winner(p1, p2)    
     return total
 
 """
 Poker Hands
 """
-
 def high(ranks):   
     return set([max(ranks)])
 
@@ -96,9 +69,7 @@ def two_pair(ranks):
     return False
 
 def full_house(ranks):
-    s = set(c for c in ranks if ranks.count(c) == 2)
-    s2 = set(c for c in ranks if ranks.count(c) == 3)
-    s = s.union(s2)
+    s = set(c for c in ranks if ranks.count(c) == 2).union(set(c for c in ranks if ranks.count(c) == 3))
     if len(s) == 2:
         return s
     return False
@@ -119,7 +90,6 @@ def straight(ranks):
         s = set(c for c in ranks if max(ranks) - min(ranks) == len(ranks)-1)
         if len(s) == 5:
             return set([max(s)])
-
     return False
 
 def straight_flush(ranks, suits):
@@ -135,7 +105,6 @@ def royal_flush(ranks, suits):
 """
 Testing
 """
-
 def tests():
     rf = "QD KD JD AD TD".split()
     sf = "2D 3D 4D 5D 6D".split()
@@ -150,7 +119,6 @@ def tests():
     tk4 = "AD AC AS AH 3D".split()
     h = "AC 2D 3S 4D 9D".split()
 
-    #print(royal_flush(card_ranks(rf), card_suits(rf)))
     assert royal_flush(card_ranks(rf), card_suits(rf)) == set([14])
     assert straight_flush(card_ranks(sf), card_suits(sf)) == set([6])
     assert straight(card_ranks(st)) == set([6])
@@ -166,8 +134,6 @@ def tests():
     assert kinds(4, card_ranks(tk4)) == set([14])
     
     assert high(card_ranks(h)) == set([14])
-
-
     return "Tests Passed"
 
 print(tests())
